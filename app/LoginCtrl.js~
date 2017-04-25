@@ -1,0 +1,5 @@
+angular.module('YOUR-APP-NAME').controller( 'LoginCtrl', function ( $scope, auth) {
+
+  $scope.auth = auth;
+
+});
