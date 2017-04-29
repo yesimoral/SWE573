@@ -29,13 +29,21 @@ angular.module('myApp.services', []).factory('twitterService', function($q) {
             OAuth.clearCache('twitter');
             authorizationResult = false;
         },
-        getLatestTweets: function (maxId) {
+        getFollowers: function (nextcursor, prevcursor) {
+        		if (nextcursor == 0 && prevcursor != 0) {
+        			return;
+        		}
             //create a deferred object using Angular's $q service
             var deferred = $q.defer();
-      			var url='/1.1/statuses/home_timeline.json';
-      			if(maxId){
-      				url+='?max_id='+maxId;
-      			}
+      			//var url='/1.1/statuses/home_timeline.json';
+					var url='/1.1/followers/list.json';
+										
+					if(nextcursor){
+						url+='?cursor='+nextcursor;
+					} 
+      			//if(maxId){
+      			//	url+='?max_id='+maxId;
+      			//}
             var promise = authorizationResult.get(url).done(function(data) { //https://dev.twitter.com/docs/api/1.1/get/statuses/home_timeline
                 //when the data is retrieved resolve the deferred object
 				        deferred.resolve(data);
