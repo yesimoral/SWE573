@@ -40,7 +40,9 @@ angular.module('myApp.services', []).factory('twitterService', function($q) {
 										
 					if(nextcursor){
 						url+='?cursor='+nextcursor;
-					} 
+					} else {
+						url+='?cursor=-1';
+					}
       			//if(maxId){
       			//	url+='?max_id='+maxId;
       			//}

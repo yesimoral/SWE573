@@ -2,15 +2,21 @@
 app.controller('TwitterController', function($scope,$q, twitterService) {
 
     $scope.followers=[]; //array of followers
-    $scope.followers_cursor = 0;
+    $scope.followers_prev_cursor = 0;
+	 $scope.followers_next_cursor = 0;
+
 
     twitterService.initialize();
 
     //using the OAuth authorization result get the latest 20 followers from twitter for the user
-    $scope.refreshFollowers = function(cursor) {
-        twitterService.getFollowers(cursor).then(function(data) {
-            $scope.followers = $scope.followers.concat(data.users);
-            $scope.followers_cursor = data.next_cursor;
+    $scope.refreshFollowers = function(followers_next_cursor, followers_prev_cursor) {
+        twitterService.getFollowers(followers_next_cursor, followers_prev_cursor).then(function(data) {
+            $scope.followers = data.users;
+            $scope.followers_next_cursor = data.next_cursor;
+            $scope.followers_prev_cursor = data.previous_cursor;
+            if (data.next_cursor == 0) {
+            	$scope.followersEnd = true;
+            }
         },function(){
             $scope.rateLimitError = true;
         });
@@ -23,7 +29,7 @@ app.controller('TwitterController', function($scope,$q, twitterService) {
                 //if the authorization is successful, hide the connect button and display the followers
                 $('#connectButton').fadeOut(function(){
                     $('#getTimelineButton, #signOut').fadeIn();
-                    $scope.refreshFollowers();
+                    $scope.refreshFollowers(0, 0);
 					          $scope.connectedTwitter = true;
                 });
             } else {
@@ -48,7 +54,7 @@ app.controller('TwitterController', function($scope,$q, twitterService) {
         $('#connectButton').hide();
         $('#getTimelineButton, #signOut').show();
      		$scope.connectedTwitter = true;
-        $scope.refreshFollowers();
+        $scope.refreshFollowers(0, 0);
     }
 
 });

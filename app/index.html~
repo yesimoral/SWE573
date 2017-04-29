@@ -65,7 +65,7 @@
               </div>
 		<div>
 			<br/>
-			<input type="button" class="btn btn-info" id="load-more" ng-click="refreshFollowers(followers[tweets.length-1].id)" ng-show="connectedTwitter" value="Load More"/>
+			<input type="button" class="btn btn-info" id="load-more" ng-click="refreshFollowers(followers_next_cursor, followers_prev_cursor)" ng-show="connectedTwitter" value="Load More"/>
 		</div>
           </div>
       </div>
