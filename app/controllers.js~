@@ -14,6 +14,9 @@ app.controller('TwitterController', function($scope,$q, twitterService) {
             $scope.followers = data.users;
             $scope.followers_next_cursor = data.next_cursor;
             $scope.followers_prev_cursor = data.previous_cursor;
+            if (data.next_cursor == 0) {
+            	$scope.followersEnd = true;
+            }
         },function(){
             $scope.rateLimitError = true;
         });

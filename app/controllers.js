@@ -46,7 +46,8 @@ app.controller('TwitterController', function($scope,$q, twitterService) {
             $('#connectButton').fadeIn();
 			$scope.$apply(function(){$scope.connectedTwitter=false})
         });
-        $scope.rateLimitError = false;    
+        $scope.rateLimitError = false;
+        $scope.followersEnd = false;    
     }
 
     //if the user is a returning user, hide the sign in button and display the followers
