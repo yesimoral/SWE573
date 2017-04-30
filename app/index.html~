@@ -17,7 +17,6 @@
   <script src="bower_components/html5-boilerplate/dist/js/vendor/modernizr-2.8.3.min.js"></script>
   <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
   <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
-  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-sanitize.js"></script>
   <style>
         .container {
@@ -38,6 +37,8 @@
     <li><a href="#!/view5">TweetTimer</a></li>
 	 <li><a href="#!/view6">myAccount</a></li>
   </ul>
+
+  <div ng-view></div>
 
   <div class="container" ng-controller="TwitterController">
       <div class="row">
@@ -63,6 +64,9 @@
                <div ng-show="rateLimitError">
                 Rate limit reached. You are making too many requests.
               </div>
+               <div ng-show="followersEnd">
+                End of followers. 
+              </div>
 		<div>
 			<br/>
 			<input type="button" class="btn btn-info" id="load-more" ng-click="refreshFollowers(followers_next_cursor, followers_prev_cursor)" ng-show="connectedTwitter" value="Load More"/>
@@ -70,6 +74,8 @@
           </div>
       </div>
   </div>
+  
+  <div>Angular seed app: v<span app-version></span></div>
 <!--<center> <a href="http://www.twitter.com" ><img class="displayed" src="images/sign-in-with-twitter.png" alt="twitterlogin"> </center>
 -->
 
@@ -77,8 +83,6 @@
   <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
   <![endif]-->
-
-  <div ng-view></div>
 
   <!-- In production use:
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/x.x.x/angular.min.js"></script>

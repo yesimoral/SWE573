@@ -10,7 +10,6 @@ var app = angular.module('myApp', [
   'myApp.view5',
   'myApp.view6',
   'myApp.version', 
-  'ngSanitize',
   'myApp.services'
 ]).
 config(['$locationProvider', '$routeProvider', function($locationProvider, $routeProvider) {
