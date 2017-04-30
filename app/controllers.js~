@@ -1,3 +1,38 @@
+	 var cities = [
+    {
+        city : 'Toronto',
+        desc : 'This is the best city in the world!',
+        lat : 43.7000,
+        long : -79.4000
+    },
+    {
+        city : 'New York',
+        desc : 'This city is aiiiiite!',
+        lat : 40.6700,
+        long : -73.9400
+    },
+    {
+        city : 'Chicago',
+        desc : 'This is the second best city in the world!',
+        lat : 41.8819,
+        long : -87.6278
+    },
+    {
+        city : 'Los Angeles',
+        desc : 'This city is live!',
+        lat : 34.0500,
+        long : -118.2500
+    },
+    {
+        city : 'Las Vegas',
+        desc : 'Sin City...\'nuff said!',
+        lat : 36.0800,
+        long : -115.1522
+    }
+];
+
+
+
 //inject the twitterService into the controller
 app.controller('TwitterController', function($scope,$q, twitterService, $location) {
 
@@ -28,12 +63,12 @@ app.controller('TwitterController', function($scope,$q, twitterService, $locatio
     //when the user clicks the connect twitter button, the popup authorization window opens
     $scope.connectButton = function() {
         twitterService.connectTwitter().then(function() {
+				$location.path('/view2');            
             if (twitterService.isReady()) {
                 //if the authorization is successful, hide the connect button and display the followers
                 $('#connectButton').fadeOut(function(){
                     $('#getFollowersButton, #signOut').fadeIn();
 					          $scope.connectedTwitter = true;
-						  		 $location.path('/view2');
                 });
             } else {
 
@@ -56,11 +91,65 @@ app.controller('TwitterController', function($scope,$q, twitterService, $locatio
 
     //if the user is a returning user, hide the sign in button and display the followers
     if (twitterService.isReady()) {
+		  $location.path('/view2');        
         $('#connectButton').hide();
         $('#getFollowersButton, #signOut').show();
 		  $('#load-more').hide();
      	  $scope.connectedTwitter = true;
- 		  $location.path('/view2');
     }
 
+});
+
+app.controller('MapCtrl', function($scope) {
+        var map, infoWindow;
+        var markers = [];
+        
+        // map config
+        var mapOptions = {
+            center: new google.maps.LatLng(50, 2),
+            zoom: 4,
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            scrollwheel: false
+        };
+        
+        // init the map
+        function initMap() {
+            if (map === void 0) {
+                map = new google.maps.Map(element[0], mapOptions);
+            }
+        }    
+        
+        // place a marker
+        function setMarker(map, position, title, content) {
+            var marker;
+            var markerOptions = {
+                position: position,
+                map: map,
+                title: title,
+                icon: 'https://maps.google.com/mapfiles/ms/icons/green-dot.png'
+            };
+
+            marker = new google.maps.Marker(markerOptions);
+            markers.push(marker); // add marker to array
+            
+            google.maps.event.addListener(marker, 'click', function () {
+                // close window if not undefined
+                if (infoWindow !== void 0) {
+                    infoWindow.close();
+                }
+                // create new window
+                var infoWindowOptions = {
+                    content: content
+                };
+                infoWindow = new google.maps.InfoWindow(infoWindowOptions);
+                infoWindow.open(map, marker);
+            });
+        }
+        
+        // show the map and place some markers
+        initMap();
+        
+        setMarker(map, new google.maps.LatLng(51.508515, -0.125487), 'London', 'Just some content');
+        setMarker(map, new google.maps.LatLng(52.370216, 4.895168), 'Amsterdam', 'More content');
+        setMarker(map, new google.maps.LatLng(48.856614, 2.352222), 'Paris', 'Text here');
 });

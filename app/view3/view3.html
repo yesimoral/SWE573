@@ -1,5 +1,6 @@
-<p>This is the partial for view 3.</p>
-<p>
-  Showing of 'interpolate' filter:
-  {{ 'Current version is v%VERSION%.' | interpolate }}
-</p>
+<div ng-controller="MapCtrl">
+    <div id="map"></div>
+    <div id="class" ng-repeat="marker in markers | orderBy : 'title'">
+         <a href="#" ng-click="openInfoWindow($event, marker)">{{marker.title}}</a>
+    </div>
+</div>
