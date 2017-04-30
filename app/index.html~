@@ -44,38 +44,11 @@
       <div class="row">
           <div class="col-xs-6">
               <button ng-click="connectButton()" id="connectButton" type="button" class="btn btn-primary">Connect Twitter</button>
-              <button ng-click="refreshFollowers()" id="getTimelineButton" type="button" class="btn btn-info" style="display:none;">Get My Followers</button>
               <button ng-click="signOut()" id="signOut" type="button" class="btn btn-link" style="display:none;">Sign Out</button>
 	</div>
-	<div class="col-xs-6">
-		<input type="text" ng-model="searchTerm" class="form-control" id="searchBox" placeholder="Enter search term here" ng-show="connectedTwitter"/>
-	</div>
-      </div>
-      <div class="row">
-          <div class="col-xs-12" id="results">
-              <div class="row" ng-repeat="t in followers | filter:searchTerm">
-                   <div class="col-xs-2 col-sm-1">
-                      <img ng-src="{{t.profile_image_url}}" class="img-circle">
-                  </div>
-                  <div class="col-xs-10 col-sm-11">
-                      <!--<small>{{t.name}}</small><br> --><span ng-bind-html="t.name"></span><br>
-                  </div>
-               </div>
-               <div ng-show="rateLimitError">
-                Rate limit reached. You are making too many requests.
-              </div>
-               <div ng-show="followersEnd">
-                End of followers. 
-              </div>
-		<div>
-			<br/>
-			<input type="button" class="btn btn-info" id="load-more" ng-click="refreshFollowers(followers_next_cursor, followers_prev_cursor)" ng-show="connectedTwitter" value="Load More"/>
-		</div>
-          </div>
       </div>
   </div>
   
-  <div>Angular seed app: v<span app-version></span></div>
 <!--<center> <a href="http://www.twitter.com" ><img class="displayed" src="images/sign-in-with-twitter.png" alt="twitterlogin"> </center>
 -->
 
