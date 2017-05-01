@@ -1,1 +1,17 @@
-<div my-map=""></div>
+<!--<div ng-controller="MapCtrl">
+    <div id="map"></div>
+    <div id="class" ng-repeat="marker in markers | orderBy : 'title'">
+         <a href="#" ng-click="openInfoWindow($event, marker)">{{marker.title}}</a>
+    </div>
+</div>-->
+
+      <div class="row">
+          <div class="col-xs-12" id="results">
+              <div class="row" ng-repeat="t in geodata">
+                  <div class="col-xs-10 col-sm-11">
+                      <small>{{t.location.lat}}</small><br><span ng-bind-html="t.location.lat"></span><br>
+							 <small>{{t.location.lng}}</small><br><span ng-bind-html="t.location.lng"></span><br>
+                  </div>
+               </div>
+           </div>
+       </div>

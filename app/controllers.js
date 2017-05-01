@@ -35,7 +35,6 @@
 
 //inject the twitterService into the controller
 app.controller('TwitterController', function($scope,$q, twitterService, $location) {
-
     $scope.followers=[]; //array of followers
     $scope.followers_prev_cursor = 0;
 	 $scope.followers_next_cursor = 0;
@@ -100,43 +99,46 @@ app.controller('TwitterController', function($scope,$q, twitterService, $locatio
 
 });
 
-app.controller('MapCtrl', function($scope) {
-    var mapOptions = {
-        zoom: 4,
-        center: new google.maps.LatLng(40.0000, -98.0000),
-        mapTypeId: google.maps.MapTypeId.TERRAIN
-    }
+app.controller('MapCtrl', function($scope, $http) {
 
-    $scope.map = new google.maps.Map(document.getElementById('map'), mapOptions);
+        $scope.markers = [];
 
-    $scope.markers = [];
-    
-    var infoWindow = new google.maps.InfoWindow();
-    
-    var createMarker = function (info){
-        
-        var marker = new google.maps.Marker({
-            map: $scope.map,
-            position: new google.maps.LatLng(info.lat, info.long),
-            title: info.city
+        $scope.map = new google.maps.Map(document.getElementById('map'), {
+            mapTypeId: google.maps.MapTypeId.TERRAIN,
+            center: new google.maps.LatLng(40.0000, -98.0000),
+            zoom: 2
         });
-        marker.content = '<div class="infoWindowContent">' + info.desc + '</div>';
-        
-        google.maps.event.addListener(marker, 'click', function(){
-            infoWindow.setContent('<h2>' + marker.title + '</h2>' + marker.content);
-            infoWindow.open($scope.map, marker);
-        });
-        
-        $scope.markers.push(marker);
-        
-    }  
-    
-    for (i = 0; i < cities.length; i++){
-        createMarker(cities[i]);
-    }
 
-    $scope.openInfoWindow = function(e, selectedMarker){
-        e.preventDefault();
-        google.maps.event.trigger(selectedMarker, 'click');
-    }
+        $scope.infoWindow = new google.maps.InfoWindow({});
+
+        $scope.createMarker = function (info) {
+            var geocoder = new google.maps.Geocoder();
+            geocoder.geocode({
+                'address': info.city
+            },
+                function (results, status) {
+                    if (status == google.maps.GeocoderStatus.OK) {
+                        var marker = new google.maps.Marker({
+                            position: results[0].geometry.location,
+                            map: $scope.map,
+                            title: info.city,
+                            content: '<div class="infoWindowContent">' + info.desc + '</div>'
+                        });
+
+
+                        google.maps.event.addListener(marker, 'click', function () {
+                            $scope.infoWindow.setContent('<h2>' + marker.title + '</h2>' + marker.content);
+                            $scope.infoWindow.open($scope.map, marker);
+                        });
+                        $scope.markers.push(marker);
+                    }
+
+                });
+        }
+
+        for (i = 0; i < cities.length; i++) {
+            $scope.createMarker(cities[i]);
+        }
+
+
 });

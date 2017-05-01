@@ -49,12 +49,6 @@
       </div>
   </div>
   
-  <div ng-controller="MapCtrl">
-    <div id="map"></div>
-    <div id="class" ng-repeat="marker in markers | orderBy : 'title'">
-         <a href="#" ng-click="openInfoWindow($event, marker)">{{marker.title}}</a>
-    </div>
-</div>
 <!--<center> <a href="http://www.twitter.com" ><img class="displayed" src="images/sign-in-with-twitter.png" alt="twitterlogin"> </center>
 -->
 
@@ -71,7 +65,7 @@
   <script src="bower_components/auth0-lock/build/lock.js"></script>
   <script src="bower_components/angular-lock/dist/angular-lock.js"></script>
   <script src="bower_components/angular-jwt/dist/angular-jwt.js"></script>
-  <script src="http://maps.googleapis.com/maps/api/js?key=&sensor=false&extension=.js"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AAIzaSyBd2_HYZ-EOzq5QKlK9o7gGTlPvEm_CbV4&sensor=false"></script>
   <script src="app.js"></script>
   <script src="view1/view1.js"></script>
   <script src="view2/view2.js"></script>
