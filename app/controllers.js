@@ -31,11 +31,12 @@
     }
 ];
 
-
+var gfollowers = [];
+var followercnt = 0;
 
 //inject the twitterService into the controller
-app.controller('TwitterController', function($scope,$q, twitterService, $location) {
-    $scope.followers=[]; //array of followers
+app.controller('TwitterController', function($scope,$q, twitterService, $location, $window) {
+    $scope.followers = [];
     $scope.followers_prev_cursor = 0;
 	 $scope.followers_next_cursor = 0;
 
@@ -45,7 +46,14 @@ app.controller('TwitterController', function($scope,$q, twitterService, $locatio
     //using the OAuth authorization result get 1 page of the latest followers from twitter for the user
     $scope.refreshFollowers = function(followers_next_cursor, followers_prev_cursor) {
         twitterService.getFollowers(followers_next_cursor, followers_prev_cursor).then(function(data) {
-            $scope.followers = data.users;
+            if(followers_next_cursor == 0 && followers_prev_cursor == 0) {
+            	$scope.followers = data.users;
+            	$window.gfollowers = data.users;
+            } else {
+				  	$scope.followers = $scope.followers.concat(data.users);
+            	$window.gfollowers = $window.gfollowers.concat(data.users);        
+            }
+            $window.followercnt = $scope.followers.length;
             $scope.followers_next_cursor = data.next_cursor;
             $scope.followers_prev_cursor = data.previous_cursor;
             if (data.next_cursor == 0) {
@@ -99,9 +107,13 @@ app.controller('TwitterController', function($scope,$q, twitterService, $locatio
 
 });
 
-app.controller('MapCtrl', function($scope, $http) {
+app.controller('MapCtrl', function($scope, $http, $window) {
 
         $scope.markers = [];
+		  $scope.locationcnt = 0;
+		  $scope.nolocationcnt = 0;
+		  $scope.followercnt = $window.followercnt;
+
 
         $scope.map = new google.maps.Map(document.getElementById('map'), {
             mapTypeId: google.maps.MapTypeId.TERRAIN,
@@ -114,30 +126,35 @@ app.controller('MapCtrl', function($scope, $http) {
         $scope.createMarker = function (info) {
             var geocoder = new google.maps.Geocoder();
             geocoder.geocode({
-                'address': info.city
+                "address" : info.location
             },
                 function (results, status) {
                     if (status == google.maps.GeocoderStatus.OK) {
                         var marker = new google.maps.Marker({
                             position: results[0].geometry.location,
                             map: $scope.map,
-                            title: info.city,
-                            content: '<div class="infoWindowContent">' + info.desc + '</div>'
+                            title: info.name,
+                            content: '<div class="infoWindowContent">' + info.screen_name + '</div>'
                         });
 
-
+								$scope.locationcnt += 1;
                         google.maps.event.addListener(marker, 'click', function () {
                             $scope.infoWindow.setContent('<h2>' + marker.title + '</h2>' + marker.content);
                             $scope.infoWindow.open($scope.map, marker);
                         });
                         $scope.markers.push(marker);
-                    }
-
+                    } else if (status == google.maps.GeocoderStatus.OVER_QUERY_LIMIT){
+                    		console.log(status);
+                    		setTimeout(function(){ $scope.createMarker(info); }, Math.floor(Math.random() * 1200) + 200  );
+                    } else {
+								$scope.nolocationcnt += 1;                    		
+                    		console.log(status);
+						  }
                 });
         }
 
-        for (i = 0; i < cities.length; i++) {
-            $scope.createMarker(cities[i]);
+        for (i = 0; i < $window.gfollowers.length; i++) {
+            $scope.createMarker($window.gfollowers[i]);
         }
 
 

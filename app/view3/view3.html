@@ -1,6 +1,13 @@
 <div ng-controller="MapCtrl">
+	<!--<div>
+  		<span>Number of followers</span>:<span {{followercnt}}></span>
+	</div>
+	<div>
+  		<span>Followers marked on map</span>:<span {{locationcnt}}></span>
+	</div>
+		<div>
+  		<span>Followers with no locations</span>:<span {{nolocationcnt}}></span>
+	</div><br> -->
+	   
     <div id="map"></div>
-    <div id="class" ng-repeat="marker in markers | orderBy : 'title'">
-         <a href="#" ng-click="openInfoWindow($event, marker)">{{marker.title}}</a>
-    </div>
 </div>
