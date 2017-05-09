@@ -1,5 +1,12 @@
-<p>This is the partial for view 4.</p>
-<p>
-  Showing of 'interpolate' filter:
-  {{ 'Current version is v%VERSION%.' | interpolate }}
-</p>
+
+  <div class="container" ng-controller="TwitterController">
+      <div class="row">
+          <div class="col-xs-6">
+            <input type="text" ng-model="status" class="form-control" id="Status" placeholder="Enter Tweet" ng-show="connectedTwitter"/><br>			
+				<form><input type="datetime-local" ng-model="datetime"></form><br>			
+				<button ng-click="tweet(status, datetime)" id="UpdateStatus" type="button" class="btn btn-info">Update Status</button>
+				<br>
+				<br>
+			 </div>
+      </div>
+  </div>

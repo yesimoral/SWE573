@@ -96,9 +96,16 @@ app.controller('TwitterController', function($scope,$q, twitterService, $locatio
         $scope.followersEnd = false;    
     }
 
+	$scope.tweet = function(status, datetime) {
+			$location.path('/view5'); 
+			var now = new Date();
+			var timediff = datetime - now;	
+			setTimeout(function(){ twitterService.postTweet(status); }, timediff);
+	}
+
     //if the user is a returning user, hide the sign in button and display the followers
     if (twitterService.isReady()) {
-		  $location.path('/view2');        
+		  //$location.path('/view2');        
         $('#connectButton').hide();
         $('#getFollowersButton, #signOut').show();
 		  $('#load-more').hide();

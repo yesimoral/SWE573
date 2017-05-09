@@ -55,6 +55,24 @@ angular.module('myApp.services', []).factory('twitterService', function($q) {
             });
             //return the promise of the deferred object
             return deferred.promise;
+        },
+        postTweet: function(status) {
+            //create a deferred object using Angular's $q service
+            var deferred = $q.defer();
+            
+            var url='/1.1/statuses/update.json';
+            
+            url+='?status='+status;
+            
+            var promise = authorizationResult.post(url).done(function(data) {
+            //when the data is retrieved resolve the deferred object
+				   deferred.resolve(data);
+            }).fail(function(err) {
+               //in case of any error we reject the promise with the error object
+               deferred.reject(err);
+            });
+            //return the promise of the deferred object
+            return deferred.promise;
         }
     }
 
