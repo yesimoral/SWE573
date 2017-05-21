@@ -34,13 +34,15 @@
 var gfollowers = [];
 var followercnt = 0;
 
+
+
 //inject the twitterService into the controller
 app.controller('TwitterController', function($scope,$q, twitterService, $location, $window) {
-    $scope.followers = [];
+
+    $scope.followers = gfollowers;
     $scope.followers_prev_cursor = 0;
 	 $scope.followers_next_cursor = 0;
-
-
+	 
     twitterService.initialize();
 
     //using the OAuth authorization result get 1 page of the latest followers from twitter for the user
@@ -49,6 +51,7 @@ app.controller('TwitterController', function($scope,$q, twitterService, $locatio
             if(followers_next_cursor == 0 && followers_prev_cursor == 0) {
             	$scope.followers = data.users;
             	$window.gfollowers = data.users;
+            	$scope.followersListed = true;
             } else {
 				  	$scope.followers = $scope.followers.concat(data.users);
             	$window.gfollowers = $window.gfollowers.concat(data.users);        
@@ -61,6 +64,7 @@ app.controller('TwitterController', function($scope,$q, twitterService, $locatio
             }
             $('#getFollowersButton').hide();
             $('#refreshFollowersButton').show();
+            setTimeout(function(){ $scope.refreshFollowers($scope.followers_next_cursor, $scope.followers_prev_cursor); }, 1 );
             $('#load-more').show();
         },function(){
             $scope.rateLimitError = true;
@@ -124,7 +128,7 @@ app.controller('MapCtrl', function($scope, $http, $window) {
 
         $scope.map = new google.maps.Map(document.getElementById('map'), {
             mapTypeId: google.maps.MapTypeId.TERRAIN,
-            center: new google.maps.LatLng(40.0000, -98.0000),
+            center: new google.maps.LatLng(40.0000, -35.0000),
             zoom: 2
         });
 

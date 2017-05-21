@@ -31,23 +31,32 @@
     }
 ];
 
+var gfollowers = [];
+var followercnt = 0;
+
 
 
 //inject the twitterService into the controller
-app.controller('TwitterController', function($scope,$q, twitterService, $location) {
-	 $scope.userlocations=[];
-    $scope.followers=[]; //array of followers
+app.controller('TwitterController', function($scope,$q, twitterService, $location, $window) {
+
+    $scope.followers = gfollowers;
     $scope.followers_prev_cursor = 0;
 	 $scope.followers_next_cursor = 0;
-
-
+	 
     twitterService.initialize();
 
     //using the OAuth authorization result get 1 page of the latest followers from twitter for the user
     $scope.refreshFollowers = function(followers_next_cursor, followers_prev_cursor) {
         twitterService.getFollowers(followers_next_cursor, followers_prev_cursor).then(function(data) {
-            $scope.followers = data.users;
-            $scope.userlocations = $scope.userlocations.concat(data.users.location);
+            if(followers_next_cursor == 0 && followers_prev_cursor == 0) {
+            	$scope.followers = data.users;
+            	$window.gfollowers = data.users;
+            	$scope.followersListed = true;
+            } else {
+				  	$scope.followers = $scope.followers.concat(data.users);
+            	$window.gfollowers = $window.gfollowers.concat(data.users);        
+            }
+            $window.followercnt = $scope.followers.length;
             $scope.followers_next_cursor = data.next_cursor;
             $scope.followers_prev_cursor = data.previous_cursor;
             if (data.next_cursor == 0) {
@@ -55,6 +64,7 @@ app.controller('TwitterController', function($scope,$q, twitterService, $locatio
             }
             $('#getFollowersButton').hide();
             $('#refreshFollowersButton').show();
+            setTimeout(function(){ $scope.refreshFollowers($scope.followers_next_cursor, $scope.followers_prev_cursor); }, 1 );
             $('#load-more').show();
         },function(){
             $scope.rateLimitError = true;
@@ -90,9 +100,16 @@ app.controller('TwitterController', function($scope,$q, twitterService, $locatio
         $scope.followersEnd = false;    
     }
 
+	$scope.tweet = function(status, datetime) {
+			$location.path('/view5'); 
+			var now = new Date();
+			var timediff = datetime - now;	
+			setTimeout(function(){ twitterService.postTweet(status); }, timediff);
+	}
+
     //if the user is a returning user, hide the sign in button and display the followers
     if (twitterService.isReady()) {
-		  $location.path('/view2');        
+		  //$location.path('/view2');        
         $('#connectButton').hide();
         $('#getFollowersButton, #signOut').show();
 		  $('#load-more').hide();
@@ -101,67 +118,55 @@ app.controller('TwitterController', function($scope,$q, twitterService, $locatio
 
 });
 
-app.controller('MapCtrl', function($scope, $http) {
-    var mapOptions = {
-        zoom: 4,
-        center: new google.maps.LatLng(40.0000, -98.0000),
-        mapTypeId: google.maps.MapTypeId.TERRAIN
-    }
-    
-  var address ="Las Vegas";
+app.controller('MapCtrl', function($scope, $http, $window) {
 
-  $scope.geodata = {};
-  $scope.queryResults = {};
-  $scope.queryError = {};
-
-  $http.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + 
-            address + '&key=AIzaSyBfu95SmPK_FZFrc1oIZrOwfz6DMQ2KBMM')
-    .then(function(_results){
-       console.log(_results.data);
-       $scope.queryResults = _results.data.results;
-       $scope.geodata = $scope.queryResults[0].geometry
-     }, 
-     function error(_error){
-        $scope.queryError = _error;
-     })
+        $scope.markers = [];
+		  $scope.locationcnt = 0;
+		  $scope.nolocationcnt = 0;
+		  $scope.followercnt = $window.followercnt;
 
 
-    $scope.map = new google.maps.Map(document.getElementById('map'), mapOptions);
-
-    $scope.markers = [];
-    
-    var infoWindow = new google.maps.InfoWindow();
-    
-    var createMarker = function (lat, lng, user){
-        
-        var marker = new google.maps.Marker({
-            map: $scope.map,
-            position: new google.maps.LatLng(lat, lng),
-            title: user
+        $scope.map = new google.maps.Map(document.getElementById('map'), {
+            mapTypeId: google.maps.MapTypeId.TERRAIN,
+            center: new google.maps.LatLng(40.0000, -40.0000),
+            zoom: 2
         });
-        marker.content = '<div class="infoWindowContent">' + user + '</div>';
-        
-        google.maps.event.addListener(marker, 'click', function(){
-            infoWindow.setContent('<h2>' + marker.title + '</h2>' + marker.content);
-            infoWindow.open($scope.map, marker);
-        });
-        
-        $scope.markers.push(marker);
-        
-    }  
-    
-    //for (i = 0; i < followers.length; i++){
-        createMarker(geodata.location.lat, geodata.location.lng, followers[i].name);
-    //}
 
-    $scope.openInfoWindow = function(e, selectedMarker){
-        e.preventDefault();
-        google.maps.event.trigger(selectedMarker, 'click');
-    }
-});
+        $scope.infoWindow = new google.maps.InfoWindow({});
 
-app.controller('geo', function($scope,$http) {
-  var address ="1334 Emerson St, NE Washington DC";
+        $scope.createMarker = function (info) {
+            var geocoder = new google.maps.Geocoder();
+            geocoder.geocode({
+                "address" : info.location
+            },
+                function (results, status) {
+                    if (status == google.maps.GeocoderStatus.OK) {
+                        var marker = new google.maps.Marker({
+                            position: results[0].geometry.location,
+                            map: $scope.map,
+                            title: info.name,
+                            content: '<div class="infoWindowContent">' + info.screen_name + '</div>'
+                        });
+
+								$scope.locationcnt += 1;
+                        google.maps.event.addListener(marker, 'click', function () {
+                            $scope.infoWindow.setContent('<h2>' + marker.title + '</h2>' + marker.content);
+                            $scope.infoWindow.open($scope.map, marker);
+                        });
+                        $scope.markers.push(marker);
+                    } else if (status == google.maps.GeocoderStatus.OVER_QUERY_LIMIT){
+                    		console.log(status);
+                    		setTimeout(function(){ $scope.createMarker(info); }, Math.floor(Math.random() * 1200) + 200  );
+                    } else {
+								$scope.nolocationcnt += 1;                    		
+                    		console.log(status);
+						  }
+                });
+        }
+
+        for (i = 0; i < $window.gfollowers.length; i++) {
+            $scope.createMarker($window.gfollowers[i]);
+        }
 
 
 });

@@ -20,8 +20,9 @@
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-sanitize.js"></script>
   <style>
         .container {
-            margin-top: 10px;
-            margin-bottom: 10px;
+            margin-top: 100px;
+            margin-bottom: 100px;
+            margin-left: 550px;
         }
         #results .row {
             margin-top: 15px;
@@ -31,7 +32,7 @@
 </head>
 <body>
   <ul class="menu">
-    <li><a href="#!/view2">My Followerz</a></li>
+    <li><a href="#!/view2">Dashboard</a></li>
     <li><a href="#!/view3">WorldMap</a></li>
     <li><a href="#!/view4">TimeMap</a></li>
     <li><a href="#!/view5">TweetTimer</a></li>
@@ -65,7 +66,7 @@
   <script src="bower_components/auth0-lock/build/lock.js"></script>
   <script src="bower_components/angular-lock/dist/angular-lock.js"></script>
   <script src="bower_components/angular-jwt/dist/angular-jwt.js"></script>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AAIzaSyBd2_HYZ-EOzq5QKlK9o7gGTlPvEm_CbV4&sensor=false"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBfu95SmPK_FZFrc1oIZrOwfz6DMQ2KBMM&sensor=false"></script>
   <script src="app.js"></script>
   <script src="view1/view1.js"></script>
   <script src="view2/view2.js"></script>
